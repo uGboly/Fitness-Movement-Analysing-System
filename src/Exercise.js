@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import './Demo.css'
+import './Exercise.css'
 import { Button } from '@mui/material'
 import {
   PoseLandmarker,
@@ -93,7 +93,7 @@ function Demo () {
             try {
               const [newCnt, newStatus, newScore] = new TypeOfExercise(
                 result.landmarks[0]
-              ).calculateExercise('walk', count, status, score)
+              ).calculateExercise('pull-up', count, status, score)
               setCount(newCnt)
               setStatus(newStatus)
               setScore(newScore)
