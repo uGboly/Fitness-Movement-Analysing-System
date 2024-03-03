@@ -8,13 +8,16 @@ import {
 
 function Demo () {
   const demosSection = useRef()
-
-  let poseLandmarker = useRef()
-  let [runningMode, setRunningMode] = useState('VIDEO')
-  let enableWebcamButton = useRef()
-  let [webcamRunning, setWebcamRunning] = useState(false)
+  const poseLandmarker = useRef()
+  const [runningMode, setRunningMode] = useState('VIDEO')
+  const enableWebcamButton = useRef()
+  const [webcamRunning, setWebcamRunning] = useState(false)
   const videoHeight = '360px'
   const videoWidth = '480px'
+  const video = useRef()
+  const canvasElement = useRef()
+  const canvasCtx = useRef()
+  const drawingUtils = useRef()
 
   const createPoseLandmarker = async () => {
     const vision = await FilesetResolver.forVisionTasks(
@@ -23,18 +26,13 @@ function Demo () {
     poseLandmarker.current = await PoseLandmarker.createFromOptions(vision, {
       baseOptions: {
         modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task`,
-        delegate: 'CPU'
+        delegate: 'GPU'
       },
       runningMode: runningMode,
       numPoses: 2
     })
     demosSection.current.classList.remove('invisible')
   }
-
-  const video = useRef()
-  const canvasElement = useRef()
-  const canvasCtx = useRef()
-  const drawingUtils = useRef()
 
   // Enable the live webcam view and start detection.
   function enableCam (event) {
@@ -71,28 +69,35 @@ function Demo () {
     video.current.style.width = videoWidth
     // Now let's start detecting the stream.
     if (runningMode === 'IMAGE') {
-      setRunningMode('VIDEO') 
+      setRunningMode('VIDEO')
       await poseLandmarker.current.setOptions({ runningMode: 'VIDEO' })
     }
     let startTimeMs = performance.now()
     if (lastVideoTime !== video.current.currentTime) {
       lastVideoTime = video.current.currentTime
-      poseLandmarker.current.detectForVideo(video.current, startTimeMs, result => {
-        canvasCtx.current.save()
-        canvasCtx.current.clearRect(
-          0,
-          0,
-          canvasElement.current.width,
-          canvasElement.current.height
-        )
-        for (const landmark of result.landmarks) {
-          drawingUtils.current.drawLandmarks(landmark, {
-            radius: data => DrawingUtils.lerp(data.from.z, -0.15, 0.1, 5, 1)
-          })
-          drawingUtils.current.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS)
+      poseLandmarker.current.detectForVideo(
+        video.current,
+        startTimeMs,
+        result => {
+          canvasCtx.current.save()
+          canvasCtx.current.clearRect(
+            0,
+            0,
+            canvasElement.current.width,
+            canvasElement.current.height
+          )
+          for (const landmark of result.landmarks) {
+            drawingUtils.current.drawLandmarks(landmark, {
+              radius: data => DrawingUtils.lerp(data.from.z, -0.15, 0.1, 5, 1)
+            })
+            drawingUtils.current.drawConnectors(
+              landmark,
+              PoseLandmarker.POSE_CONNECTIONS
+            )
+          }
+          canvasCtx.current.restore()
         }
-        canvasCtx.current.restore()
-      })
+      )
     }
 
     // Call this function again to keep predicting when the browser is ready.
@@ -121,16 +126,16 @@ function Demo () {
           <span className='mdc-button__ripple'></span>
           <span className='mdc-button__label'>ENABLE WEBCAM</span>
         </button>
-        <div style={{position: 'relative'}}>
+        <div style={{ position: 'relative' }}>
           <video
+            autoPlay
+            playsInline
             ref={video}
             onLoadedData={predictWebcam}
             style={{
               width: '1280px',
               height: '720px',
-              position: 'absolute',
-              autoplay: true,
-              playsinline: true
+              position: 'absolute'
             }}
           ></video>
           <canvas
