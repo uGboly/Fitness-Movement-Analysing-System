@@ -6,6 +6,7 @@ import {
   FilesetResolver,
   DrawingUtils
 } from '@mediapipe/tasks-vision'
+import TypeOfExercise from './GestureScore/TypeOfExercise'
 
 function Demo () {
   const demosSection = useRef()
@@ -85,6 +86,7 @@ function Demo () {
           video.current,
           startTimeMs,
           result => {
+            console.log(result)
             canvasCtx.current.save()
             canvasCtx.current.clearRect(
               0,
@@ -121,7 +123,7 @@ function Demo () {
 
   return (
     <section ref={demosSection} className='invisible'>
-      <div id='liveView' className='videoView'>
+      <div className='videoView'>
         <Button
           variant='contained'
           ref={enableWebcamButton}
