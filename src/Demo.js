@@ -21,6 +21,10 @@ function Demo () {
   const drawingUtils = useRef()
   const lastVideoTime = useRef(-1)
 
+  const [score, setScore] = useState(0)
+  const [count, setCount] = useState(0)
+  const [status, setStatus] = useState(false)
+
   const createPoseLandmarker = async () => {
     const vision = await FilesetResolver.forVisionTasks(
       'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
@@ -86,7 +90,15 @@ function Demo () {
           video.current,
           startTimeMs,
           result => {
-            console.log(result)
+            try {
+              const [newCnt, newStatus, newScore] = new TypeOfExercise(
+                result.landmarks[0]
+              ).calculateExercise('walk', count, status, score)
+              setCount(newCnt)
+              setStatus(newStatus)
+              setScore(newScore)
+            } catch (e) {}
+
             canvasCtx.current.save()
             canvasCtx.current.clearRect(
               0,
@@ -153,6 +165,22 @@ function Demo () {
           ></canvas>
         </div>
       </div>
+      <table>
+        <thead>
+          <tr>
+            <th>计数</th>
+            <th>状态</th>
+            <th>平均分</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{count}</td>
+            <td>{status?'完成':'未完成'}</td>
+            <td>{score}</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
   )
 }
