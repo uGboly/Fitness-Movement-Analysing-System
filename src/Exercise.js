@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-// import './Exercise.css'
-import { Button } from '@mui/material'
+import { Button, TableContainer,TableBody, TableRow, TableCell, Paper, Table, TableHead } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2'
 import {
   PoseLandmarker,
   FilesetResolver,
@@ -9,7 +9,6 @@ import {
 import TypeOfExercise from './GestureScore/TypeOfExercise'
 
 function Demo () {
-  const demosSection = useRef()
   const poseLandmarker = useRef()
   const enableWebcamButton = useRef()
   const [webcamRunning, setWebcamRunning] = useState(false)
@@ -37,7 +36,6 @@ function Demo () {
       runningMode: 'VIDEO',
       numPoses: 2
     })
-    demosSection.current.classList.remove('invisible')
   }
 
   // Enable the live webcam view and start detection.
@@ -93,7 +91,7 @@ function Demo () {
             try {
               const [newCnt, newStatus, newScore] = new TypeOfExercise(
                 result.landmarks[0]
-              ).calculateExercise('pull-up', count, status, score)
+              ).calculateExercise('squat', count, status, score)
               setCount(newCnt)
               setStatus(newStatus)
               setScore(newScore)
@@ -134,54 +132,65 @@ function Demo () {
   }, [])
 
   return (
-    <section ref={demosSection} className='invisible'>
-      <div className='videoView'>
+    <Grid container>
+      <Grid item xs={6} style={{ position: 'relative' }}>
+        <video
+          autoPlay
+          playsInline
+          ref={video}
+          onLoadedData={predictWebcam}
+          style={{
+            width: '480px',
+            height: '360px',
+            position: 'absolute',
+            clear: 'both',
+            display: 'block',
+            transform: 'rotateY(180deg)'
+          }}
+        ></video>
+        <canvas
+          ref={canvasElement}
+          width='480px'
+          height='360px'
+          style={{
+            position: 'absolute',
+            left: '0px',
+            top: '0px',
+            transform: 'rotateY(180deg)',
+            zIndex: 1
+          }}
+        ></canvas>
+      </Grid>
+
+      <Grid item xs={6}>
         <Button
           variant='contained'
           ref={enableWebcamButton}
-          className='mdc-button mdc-button--raised'
           onClick={enableCam}
         >
           {webcamRunning ? '结束健身' : '开始健身'}
         </Button>
-        <div style={{ position: 'relative' }}>
-          <video
-            autoPlay
-            playsInline
-            ref={video}
-            onLoadedData={predictWebcam}
-            style={{
-              width: '1280px',
-              height: '720px',
-              position: 'absolute'
-            }}
-          ></video>
-          <canvas
-            className='output_canvas'
-            ref={canvasElement}
-            width='1280'
-            height='720'
-            style={{ position: 'absolute', left: '0px', top: '0px' }}
-          ></canvas>
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>计数</th>
-            <th>状态</th>
-            <th>平均分</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{count}</td>
-            <td>{status?'完成':'未完成'}</td>
-            <td>{score}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+
+        <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>计数</TableCell>
+              <TableCell>状态</TableCell>
+              <TableCell>平均分</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>{count}</TableCell>
+              <TableCell>{status ? '完成' : '未完成'}</TableCell>
+              <TableCell>{score.toFixed(2)}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        </TableContainer>
+      </Grid>
+    </Grid>
   )
 }
 
