@@ -10,7 +10,7 @@ function Demo () {
   const demosSection = useRef()
 
   let poseLandmarker = useRef()
-  let [runningMode, setRunningMode] = useState('IMAGE')
+  let [runningMode, setRunningMode] = useState('VIDEO')
   let enableWebcamButton = useRef()
   let [webcamRunning, setWebcamRunning] = useState(false)
   const videoHeight = '360px'
@@ -32,7 +32,7 @@ function Demo () {
   }
 
   const video = useRef()
-  const canvasElement = useRef('output_canvas')
+  const canvasElement = useRef()
   const canvasCtx = useRef()
   const drawingUtils = useRef()
 
@@ -59,7 +59,7 @@ function Demo () {
     // Activate the webcam stream.
     navigator.mediaDevices.getUserMedia(constraints).then(stream => {
       video.current.srcObject = stream
-      video.current.addEventListener('loadeddata', predictWebcam)
+      // video.current.addEventListener('loadeddata', predictWebcam)
     })
   }
 
@@ -124,6 +124,7 @@ function Demo () {
         <div style={{position: 'relative'}}>
           <video
             ref={video}
+            onLoadedData={predictWebcam}
             style={{
               width: '1280px',
               height: '720px',
