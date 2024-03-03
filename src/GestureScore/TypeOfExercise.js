@@ -165,22 +165,27 @@ class TypeOfExercise extends BodyPartAngle {
   }
 
   calculateExercise (exerciseType, counter, status, avgScore) {
-    switch (exerciseType) {
-      case 'push-up':
-        return this.pushUp(counter, status, avgScore)
-      case 'pull-up':
-        return this.pullUp(counter, status, avgScore)
-      case 'squat':
-        return this.squat(counter, status, avgScore)
-      case 'walk':
-        // Note: The 'walk' method does not use avgScore, so handle it accordingly.
-        const [walkCounter, walkStatus] = this.walk(counter, status)
-        return [walkCounter, walkStatus, 0]
-      case 'sit-up':
-        return this.sitUp(counter, status, avgScore)
-      default:
-        throw new Error('Unknown exercise type')
+    try {
+      switch (exerciseType) {
+        case 'push-up':
+          return this.pushUp(counter, status, avgScore)
+        case 'pull-up':
+          return this.pullUp(counter, status, avgScore)
+        case 'squat':
+          return this.squat(counter, status, avgScore)
+        case 'walk':
+          // Note: The 'walk' method does not use avgScore, so handle it accordingly.
+          const [walkCounter, walkStatus] = this.walk(counter, status)
+          return [walkCounter, walkStatus, 0]
+        case 'sit-up':
+          return this.sitUp(counter, status, avgScore)
+        default:
+          throw new Error('Unknown exercise type')
+      }
+    } catch (e) {
+      return [0, true, 0]
     }
+    
   }
 }
 

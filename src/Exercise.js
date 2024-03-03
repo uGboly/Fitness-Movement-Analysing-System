@@ -1,5 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, TableContainer,TableBody, TableRow, TableCell, Paper, Table, TableHead } from '@mui/material'
+import {
+  Button,
+  TableContainer,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+  Table,
+  TableHead,
+  Input,
+  Select,
+  MenuItem
+} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import {
   PoseLandmarker,
@@ -20,9 +32,13 @@ function Demo () {
   const drawingUtils = useRef()
   const lastVideoTime = useRef(-1)
 
-  const [score, setScore] = useState(0)
-  const [count, setCount] = useState(0)
-  const [status, setStatus] = useState(false)
+  const [file, setFile] = useState()
+  const [type, setType] = useState('push-up')
+  const [status, setStatus] = useState({
+    score: 0,
+    count: 0,
+    status: false
+  })
 
   const createPoseLandmarker = async () => {
     const vision = await FilesetResolver.forVisionTasks(
@@ -39,7 +55,7 @@ function Demo () {
   }
 
   // Enable the live webcam view and start detection.
-  async function enableCam (event) {
+  async function enableCam (event, isCam) {
     if (!poseLandmarker.current) {
       await createPoseLandmarker()
     }
@@ -50,9 +66,12 @@ function Demo () {
       poseLandmarker.current = null
 
       const stream = video.current.srcObject
-      const tracks = stream.getTracks()
-      tracks.forEach(track => track.stop())
-      video.current.srcObject = null
+      if (stream) {
+        const tracks = stream.getTracks()
+        tracks.forEach(track => track.stop())
+        video.current.srcObject = null
+      }
+      video.current.src = null
 
       canvasCtx.current.clearRect(
         0,
@@ -62,15 +81,26 @@ function Demo () {
       )
     } else {
       setWebcamRunning(true)
-      // getUsermedia parameters.
-      const constraints = {
-        video: true
-      }
-
-      // Activate the webcam stream.
-      navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-        video.current.srcObject = stream
+      setStatus({
+        score: 0,
+        count: 0,
+        status: false
       })
+      if (isCam) {
+        // getUsermedia parameters.
+        const constraints = {
+          video: true
+        }
+
+        // Activate the webcam stream.
+        navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+          video.current.srcObject = stream
+        })
+      } else {
+        setWebcamRunning(true)
+        video.current.srcObject = null
+        video.current.src = URL.createObjectURL(file)
+      }
     }
   }
 
@@ -88,14 +118,17 @@ function Demo () {
           video.current,
           startTimeMs,
           result => {
-            try {
+            setStatus(prev => {
               const [newCnt, newStatus, newScore] = new TypeOfExercise(
                 result.landmarks[0]
-              ).calculateExercise('squat', count, status, score)
-              setCount(newCnt)
-              setStatus(newStatus)
-              setScore(newScore)
-            } catch (e) {}
+              ).calculateExercise(type, prev.count, prev.status, prev.score)
+
+              return {
+                count: newCnt,
+                status: newStatus,
+                score: newScore
+              }
+            })
 
             canvasCtx.current.save()
             canvasCtx.current.clearRect(
@@ -163,31 +196,46 @@ function Demo () {
       </Grid>
 
       <Grid item xs={6}>
+        <Input type='file' onChange={e => setFile(e.target.files[0])}></Input>
+        <Select value={type} onChange={e => setType(e.target.value)}>
+          <MenuItem value='push-up'>引体向上</MenuItem>
+          <MenuItem value='pull-up'>俯卧撑</MenuItem>
+          <MenuItem value='squat'>深蹲</MenuItem>
+          <MenuItem value='walk'>行走</MenuItem>
+          <MenuItem value='sit-up'>仰卧起坐</MenuItem>
+        </Select>
         <Button
           variant='contained'
           ref={enableWebcamButton}
-          onClick={enableCam}
+          onClick={e => enableCam(e, false)}
+        >
+          {webcamRunning ? '关闭视频' : '打开视频'}
+        </Button>
+        <Button
+          variant='contained'
+          ref={enableWebcamButton}
+          onClick={e => enableCam(e, true)}
         >
           {webcamRunning ? '结束健身' : '开始健身'}
         </Button>
 
         <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>计数</TableCell>
-              <TableCell>状态</TableCell>
-              <TableCell>平均分</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>{count}</TableCell>
-              <TableCell>{status ? '完成' : '未完成'}</TableCell>
-              <TableCell>{score.toFixed(2)}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>计数</TableCell>
+                <TableCell>状态</TableCell>
+                <TableCell>平均分</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>{status.count}</TableCell>
+                <TableCell>{status.status ? '完成' : '  未完成'}</TableCell>
+                <TableCell>{status.score.toFixed(2)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </TableContainer>
       </Grid>
     </Grid>
