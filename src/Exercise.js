@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import './Exercise.css'
+// import './Exercise.css'
 import { Button } from '@mui/material'
 import {
   PoseLandmarker,
