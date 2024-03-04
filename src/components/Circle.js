@@ -11,15 +11,15 @@ function Circle({ text, color}) {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height={150}
-            width={150}
+            height={100}
+            width={100}
             margin='auto'
         >
             <Paper
                 elevation={4}
                 sx={{
-                    height: 150,
-                    width: 150,
+                    height: 100,
+                    width: 100,
                     borderRadius: '50%',
                     display: 'flex',
                     justifyContent: 'center',
@@ -28,7 +28,7 @@ function Circle({ text, color}) {
                     color: 'white'
                 }}
             >
-                <Typography variant="h3">{text}</Typography>
+                <Typography variant="h4">{text}</Typography>
             </Paper>
         </Box>
     )

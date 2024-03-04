@@ -214,11 +214,7 @@ function Exercise() {
       </Grid>
 
       <Grid container xs={6} spacing={2}>
-        <Grid xs={12}>
-          <InputLabel id="file">选择健身视频</InputLabel>
-          <TextField type='file' onChange={e => setFile(e.target.files[0])}></TextField >
-        </Grid>
-        <Grid xs={12}>
+        <Grid xs={6}>
           <InputLabel id="type">选择健身动作类型</InputLabel>
           <Select value={type} labelId='type' onChange={e => setType(e.target.value)}>
             <MenuItem value='push-up'>引体向上</MenuItem>
@@ -227,6 +223,10 @@ function Exercise() {
             <MenuItem value='walk'>行走</MenuItem>
             <MenuItem value='sit-up'>仰卧起坐</MenuItem>
           </Select>
+        </Grid>
+        <Grid xs={6}>
+          <InputLabel id="file">选择健身视频</InputLabel>
+          <TextField type='file' onChange={e => setFile(e.target.files[0])}></TextField >
         </Grid>
         <Grid xs={12}>
           <ButtonGroup variant="contained" >
