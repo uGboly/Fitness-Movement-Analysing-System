@@ -183,7 +183,7 @@ class TypeOfExercise extends BodyPartAngle {
           throw new Error('Unknown exercise type')
       }
     } catch (e) {
-      return [0, true, 0]
+      return [counter, status, avgScore]
     }
     
   }

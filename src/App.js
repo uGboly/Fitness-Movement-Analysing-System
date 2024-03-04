@@ -5,14 +5,14 @@ import Register from './Register'
 import Records from './Records'
 import NavBar from './NavBar'
 
-function App () {
+function App() {
   return (
     <Router>
       <div>
-      <NavBar />
+        <NavBar />
         <Routes>
+          <Route exact path='/' element={<Login />} />
           <Route path='/exercise' element={<Exercise />} />
-          <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/records' element={<Records />} />
         </Routes>

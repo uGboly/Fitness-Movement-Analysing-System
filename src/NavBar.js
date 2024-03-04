@@ -18,7 +18,7 @@ function NavBar() {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           健身动作评估系统
         </Typography>
-        <Button sx={getButtonStyle('/login')} onClick={() => navigate('/login')}>登陆</Button>
+        <Button sx={getButtonStyle('/')} onClick={() => navigate('/')}>登陆</Button>
         <Button sx={getButtonStyle('/register')} onClick={() => navigate('/register')}>注册</Button>
         <Button sx={getButtonStyle('/exercise')} onClick={() => navigate('/exercise')}>健身</Button>
         <Button sx={getButtonStyle('/records')} onClick={() => navigate('/records')}>记录</Button>

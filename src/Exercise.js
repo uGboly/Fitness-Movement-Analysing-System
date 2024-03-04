@@ -37,7 +37,8 @@ function Demo () {
   const [status, setStatus] = useState({
     score: 0,
     count: 0,
-    status: false
+    status: true,
+    historyScores : []
   })
 
   const createPoseLandmarker = async () => {
@@ -50,7 +51,8 @@ function Demo () {
         delegate: 'GPU'
       },
       runningMode: 'VIDEO',
-      numPoses: 2
+      minPoseDetectionConfidence:0.5,
+      minTrackingConfidence:0.5
     })
   }
 
@@ -84,7 +86,8 @@ function Demo () {
       setStatus({
         score: 0,
         count: 0,
-        status: false
+        status: true,
+        historyScores : []
       })
       if (isCam) {
         // getUsermedia parameters.
@@ -126,7 +129,8 @@ function Demo () {
               return {
                 count: newCnt,
                 status: newStatus,
-                score: newScore
+                score: newScore,
+                historyScores : newCnt > prev.count ? [newScore, ...prev.historyScores] : prev.historyScores
               }
             })
 
@@ -231,7 +235,7 @@ function Demo () {
             <TableBody>
               <TableRow>
                 <TableCell>{status.count}</TableCell>
-                <TableCell>{status.status ? '完成' : '  未完成'}</TableCell>
+                <TableCell>{status.status ? '运动中' : '  未在运动'}</TableCell>
                 <TableCell>{status.score.toFixed(2)}</TableCell>
               </TableRow>
             </TableBody>
