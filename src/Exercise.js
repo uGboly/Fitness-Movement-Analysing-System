@@ -213,7 +213,7 @@ function Exercise() {
       <Grid container xs={6} spacing={2}>
         <Grid xs={12}>
           <InputLabel id="file">选择健身视频</InputLabel>
-          <TextField  type='file' labelId='file' onChange={e => setFile(e.target.files[0])}></TextField >
+          <TextField  type='file' onChange={e => setFile(e.target.files[0])}></TextField >
         </Grid>
         <Grid xs={12}>
           <InputLabel id="type">选择健身动作类型</InputLabel>

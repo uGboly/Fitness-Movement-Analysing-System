@@ -34,15 +34,15 @@ function detectBodyPart (landmarks, bodyPartName) {
 
 // Returns body parts, x, y as an array (since we're not using DataFrames in JS)
 //  function detectBodyParts(landmarks) {
-//     const bodyParts = [];
+//     const bodyParts = []
 
 //     // Assuming PoseLandmarker gives access to landmarks in a manner similar to this
 //     for (const [bodyPartName, landmark] of Object.entries(PoseLandmarker)) {
-//         const cord = await detectBodyPart(landmarks, bodyPartName);
-//         bodyParts.push({ bodyPart: bodyPartName, x: cord[0], y: cord[1] });
+//         const cord = await detectBodyPart(landmarks, bodyPartName)
+//         bodyParts.push({ bodyPart: bodyPartName, x: cord[0], y: cord[1] })
 //     }
 
-//     return bodyParts;
+//     return bodyParts
 // }
 
 export { calculateAngle, detectBodyPart }
