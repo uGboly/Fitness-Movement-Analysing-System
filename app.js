@@ -52,13 +52,13 @@ app.post("/register", async (req, res) => {
 })
 
 app.post("/fitness-data", async (req, res) => {
-  const fitnessDataArray = req.body
+  const {scores, type, userId} = req.body
+  scores.reverse()
   const timestamp = new Date()
 
   try {
     const insertedData = await Promise.all(
-      fitnessDataArray.map(async (data) => {
-        const { userId, type, score } = data
+      scores.map(async (score) => {
         return knex("fitness_data").insert({
           userId,
           type,

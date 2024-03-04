@@ -8,7 +8,7 @@ import {
   Paper,
   Table,
   TableHead,
-  TextField ,
+  TextField,
   Select,
   MenuItem,
   InputLabel
@@ -19,8 +19,9 @@ import {
   FilesetResolver,
   DrawingUtils
 } from '@mediapipe/tasks-vision'
+import axios from 'axios'
 import TypeOfExercise from './GestureScore/TypeOfExercise'
-import Circle from './Circle'
+import Circle from './components/Circle'
 
 function Exercise() {
   const poseLandmarker = useRef()
@@ -108,7 +109,7 @@ function Exercise() {
     }
   }
 
-   async function predictWebcam() {
+  async function predictWebcam() {
     canvasElement.current.style.height = videoHeight
     video.current.style.height = videoHeight
     canvasElement.current.style.width = videoWidth
@@ -213,7 +214,7 @@ function Exercise() {
       <Grid container xs={6} spacing={2}>
         <Grid xs={12}>
           <InputLabel id="file">选择健身视频</InputLabel>
-          <TextField  type='file' onChange={e => setFile(e.target.files[0])}></TextField >
+          <TextField type='file' onChange={e => setFile(e.target.files[0])}></TextField >
         </Grid>
         <Grid xs={12}>
           <InputLabel id="type">选择健身动作类型</InputLabel>
@@ -237,6 +238,23 @@ function Exercise() {
             onClick={e => enableCam(e, true)}
           >
             {webcamRunning ? '结束健身' : '开始健身'}
+          </Button>
+          <Button
+            variant='contained'
+            onClick={async () => {
+              try {
+                const response = await axios.post('http://localhost:3001/fitness-data', {
+                  scores: status.historyScores,
+                  userId: localStorage.getItem('userId'),
+                  type
+                });
+                console.log('上传成功:', response.data);
+              } catch (error) {
+                console.error('上传失败:', error);
+              }
+            }}
+          >
+            上传健身数据
           </Button>
         </Grid>
         <Grid container xs={12}>

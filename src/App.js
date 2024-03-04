@@ -3,7 +3,7 @@ import Exercise from './Exercise'
 import Login from './Login'
 import Register from './Register'
 import Records from './Records'
-import NavBar from './NavBar'
+import NavBar from './components/NavBar'
 
 function App() {
   return (
