@@ -11,7 +11,8 @@ import {
   TextField,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
+  ButtonGroup
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import {
@@ -33,6 +34,7 @@ function Exercise() {
   const canvasCtx = useRef()
   const drawingUtils = useRef()
   const lastVideoTime = useRef(-1)
+  const animationFrameId = useRef()
 
   const [file, setFile] = useState()
   const [type, setType] = useState('push-up')
@@ -58,13 +60,12 @@ function Exercise() {
     })
   }
 
-  // Enable the live webcam view and start detection.
   async function enableCam(event, isCam) {
     if (!poseLandmarker.current) {
       await createPoseLandmarker()
     }
 
-    if (webcamRunning === true) {
+    if (webcamRunning) {
       setWebcamRunning(false)
 
       poseLandmarker.current = null
@@ -84,7 +85,6 @@ function Exercise() {
         canvasElement.current.height
       )
     } else {
-      setWebcamRunning(true)
       setStatus({
         score: 0,
         count: 0,
@@ -92,17 +92,16 @@ function Exercise() {
         historyScores: []
       })
       if (isCam) {
-        // getUsermedia parameters.
+        setWebcamRunning('cam')
         const constraints = {
           video: true
         }
 
-        // Activate the webcam stream.
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
           video.current.srcObject = stream
         })
       } else {
-        setWebcamRunning(true)
+        setWebcamRunning('file')
         video.current.srcObject = null
         video.current.src = URL.createObjectURL(file)
       }
@@ -158,9 +157,8 @@ function Exercise() {
         )
     }
 
-    // Call this function again to keep predicting when the browser is ready.
-    if (webcamRunning === true) {
-      window.requestAnimationFrame(predictWebcam)
+    if (webcamRunning) {
+      animationFrameId.current = window.requestAnimationFrame(predictWebcam)
     }
   }
 
@@ -177,6 +175,8 @@ function Exercise() {
         historyScores: []
       })
       poseLandmarker.current = null
+
+      animationFrameId.current && window.cancelAnimationFrame(animationFrameId.current)
     }
   }, [type])
 
@@ -191,6 +191,8 @@ function Exercise() {
           style={{
             width: '480px',
             height: '360px',
+            left: '50px',
+            top: '50px',
             position: 'absolute',
             clear: 'both',
             display: 'block',
@@ -203,8 +205,8 @@ function Exercise() {
           height='360px'
           style={{
             position: 'absolute',
-            left: '0px',
-            top: '0px',
+            left: '50px',
+            top: '50px',
             transform: 'rotateY(180deg)',
             zIndex: 1
           }}
@@ -227,35 +229,37 @@ function Exercise() {
           </Select>
         </Grid>
         <Grid xs={12}>
-          <Button
-            variant='contained'
-            onClick={e => enableCam(e, false)}
-          >
-            {webcamRunning ? '关闭视频' : '打开视频'}
-          </Button>
-          <Button
-            variant='contained'
-            onClick={e => enableCam(e, true)}
-          >
-            {webcamRunning ? '结束健身' : '开始健身'}
-          </Button>
-          <Button
-            variant='contained'
-            onClick={async () => {
-              try {
-                const response = await axios.post('http://localhost:3001/fitness-data', {
-                  scores: status.historyScores,
-                  userId: localStorage.getItem('userId'),
-                  type
-                });
-                console.log('上传成功:', response.data);
-              } catch (error) {
-                console.error('上传失败:', error);
-              }
-            }}
-          >
-            上传健身数据
-          </Button>
+          <ButtonGroup variant="contained" >
+
+            <Button
+              onClick={e => enableCam(e, false)}
+              disabled={webcamRunning === 'cam'}
+            >
+              {webcamRunning === 'file' ? '关闭视频文件' : webcamRunning === 'cam' ? '请先关闭摄像头' : '打开视频文件'}
+            </Button>
+            <Button
+              onClick={e => enableCam(e, true)}
+              disabled={webcamRunning === 'file'}
+            >
+              {webcamRunning === 'cam' ? '关闭摄像头' : webcamRunning === 'file' ? '请先关闭视频文件' : '打开摄像头'}
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  const response = await axios.post('http://localhost:3001/fitness-data', {
+                    scores: status.historyScores,
+                    userId: localStorage.getItem('userId'),
+                    type
+                  });
+                  console.log('上传成功:', response.data);
+                } catch (error) {
+                  console.error('上传失败:', error);
+                }
+              }}
+            >
+              上传健身数据
+            </Button>
+          </ButtonGroup>
         </Grid>
         <Grid container xs={12}>
           <Grid xs={6}><Circle text={status.count + '次'} color='primary.main' /></Grid>
