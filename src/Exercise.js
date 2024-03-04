@@ -8,9 +8,10 @@ import {
   Paper,
   Table,
   TableHead,
-  Input,
+  TextField ,
   Select,
-  MenuItem
+  MenuItem,
+  InputLabel
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import {
@@ -19,10 +20,10 @@ import {
   DrawingUtils
 } from '@mediapipe/tasks-vision'
 import TypeOfExercise from './GestureScore/TypeOfExercise'
+import Circle from './Circle'
 
-function Demo () {
+function Exercise() {
   const poseLandmarker = useRef()
-  const enableWebcamButton = useRef()
   const [webcamRunning, setWebcamRunning] = useState(false)
   const videoHeight = '360px'
   const videoWidth = '480px'
@@ -38,7 +39,7 @@ function Demo () {
     score: 0,
     count: 0,
     status: true,
-    historyScores : []
+    historyScores: []
   })
 
   const createPoseLandmarker = async () => {
@@ -51,13 +52,13 @@ function Demo () {
         delegate: 'GPU'
       },
       runningMode: 'VIDEO',
-      minPoseDetectionConfidence:0.5,
-      minTrackingConfidence:0.5
+      minPoseDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
     })
   }
 
   // Enable the live webcam view and start detection.
-  async function enableCam (event, isCam) {
+  async function enableCam(event, isCam) {
     if (!poseLandmarker.current) {
       await createPoseLandmarker()
     }
@@ -87,7 +88,7 @@ function Demo () {
         score: 0,
         count: 0,
         status: true,
-        historyScores : []
+        historyScores: []
       })
       if (isCam) {
         // getUsermedia parameters.
@@ -107,7 +108,7 @@ function Demo () {
     }
   }
 
-  async function predictWebcam () {
+   async function predictWebcam() {
     canvasElement.current.style.height = videoHeight
     video.current.style.height = videoHeight
     canvasElement.current.style.width = videoWidth
@@ -130,7 +131,7 @@ function Demo () {
                 count: newCnt,
                 status: newStatus,
                 score: newScore,
-                historyScores : newCnt > prev.count ? [newScore, ...prev.historyScores] : prev.historyScores
+                historyScores: newCnt > prev.count ? [newScore, ...prev.historyScores] : prev.historyScores
               }
             })
 
@@ -166,11 +167,21 @@ function Demo () {
     createPoseLandmarker()
     canvasCtx.current = canvasElement.current.getContext('2d')
     drawingUtils.current = new DrawingUtils(canvasCtx.current)
-  }, [])
+
+    return () => {
+      setStatus({
+        score: 0,
+        count: 0,
+        status: true,
+        historyScores: []
+      })
+      poseLandmarker.current = null
+    }
+  }, [type])
 
   return (
     <Grid container>
-      <Grid item xs={6} style={{ position: 'relative' }}>
+      <Grid xs={6} style={{ position: 'relative' }}>
         <video
           autoPlay
           playsInline
@@ -199,51 +210,63 @@ function Demo () {
         ></canvas>
       </Grid>
 
-      <Grid item xs={6}>
-        <Input type='file' onChange={e => setFile(e.target.files[0])}></Input>
-        <Select value={type} onChange={e => setType(e.target.value)}>
-          <MenuItem value='push-up'>引体向上</MenuItem>
-          <MenuItem value='pull-up'>俯卧撑</MenuItem>
-          <MenuItem value='squat'>深蹲</MenuItem>
-          <MenuItem value='walk'>行走</MenuItem>
-          <MenuItem value='sit-up'>仰卧起坐</MenuItem>
-        </Select>
-        <Button
-          variant='contained'
-          ref={enableWebcamButton}
-          onClick={e => enableCam(e, false)}
-        >
-          {webcamRunning ? '关闭视频' : '打开视频'}
-        </Button>
-        <Button
-          variant='contained'
-          ref={enableWebcamButton}
-          onClick={e => enableCam(e, true)}
-        >
-          {webcamRunning ? '结束健身' : '开始健身'}
-        </Button>
+      <Grid container xs={6} spacing={2}>
+        <Grid xs={12}>
+          <InputLabel id="file">选择健身视频</InputLabel>
+          <TextField  type='file' labelId='file' onChange={e => setFile(e.target.files[0])}></TextField >
+        </Grid>
+        <Grid xs={12}>
+          <InputLabel id="type">选择健身动作类型</InputLabel>
+          <Select value={type} labelId='type' onChange={e => setType(e.target.value)}>
+            <MenuItem value='push-up'>引体向上</MenuItem>
+            <MenuItem value='pull-up'>俯卧撑</MenuItem>
+            <MenuItem value='squat'>深蹲</MenuItem>
+            <MenuItem value='walk'>行走</MenuItem>
+            <MenuItem value='sit-up'>仰卧起坐</MenuItem>
+          </Select>
+        </Grid>
+        <Grid xs={12}>
+          <Button
+            variant='contained'
+            onClick={e => enableCam(e, false)}
+          >
+            {webcamRunning ? '关闭视频' : '打开视频'}
+          </Button>
+          <Button
+            variant='contained'
+            onClick={e => enableCam(e, true)}
+          >
+            {webcamRunning ? '结束健身' : '开始健身'}
+          </Button>
+        </Grid>
+        <Grid container xs={12}>
+          <Grid xs={6}><Circle text={status.count + '次'} color='primary.main' /></Grid>
+          <Grid xs={6}><Circle text={status.score.toFixed(2)} color='secondary.main' /></Grid>
+        </Grid>
+        <Grid xs={12}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>计次</TableCell>
+                  <TableCell>分数</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {status.historyScores.map((value, index, arr) => (
+                  <TableRow key={index}>
+                    <TableCell>第{arr.length - index}次</TableCell>
+                    <TableCell>{value.toFixed(2)}</TableCell>
+                  </TableRow>))
+                }
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>计数</TableCell>
-                <TableCell>状态</TableCell>
-                <TableCell>平均分</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>{status.count}</TableCell>
-                <TableCell>{status.status ? '运动中' : '  未在运动'}</TableCell>
-                <TableCell>{status.score.toFixed(2)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
       </Grid>
     </Grid>
   )
 }
 
-export default Demo
+export default Exercise
