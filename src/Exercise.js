@@ -182,9 +182,8 @@ function Exercise() {
         status: true,
         historyScores: []
       })
-      poseLandmarker.current = null
-
       animationFrameId.current && window.cancelAnimationFrame(animationFrameId.current)
+      poseLandmarker.current = null
     }
   }, [type])
 
