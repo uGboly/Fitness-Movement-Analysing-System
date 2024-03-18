@@ -23,6 +23,7 @@ import {
 import axios from 'axios'
 import TypeOfExercise from './GestureScore/TypeOfExercise'
 import Circle from './components/Circle'
+import { speakChinese, exerciseNameMap } from './utils'
 
 function Exercise() {
   const poseLandmarker = useRef()
@@ -37,8 +38,9 @@ function Exercise() {
   const animationFrameId = useRef()
 
   const [file, setFile] = useState()
-  const [type, setType] = useState('push-up')
+  const [type, setType] = useState('pull-up')
   const [status, setStatus] = useState({
+    prevCount: 0,
     score: 0,
     count: 0,
     status: true,
@@ -51,7 +53,7 @@ function Exercise() {
     )
     poseLandmarker.current = await PoseLandmarker.createFromOptions(vision, {
       baseOptions: {
-        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task`,
+        modelAssetPath: `http://localhost:3000/pose_landmarker_lite.task`,
         delegate: 'GPU'
       },
       runningMode: 'VIDEO',
@@ -86,6 +88,7 @@ function Exercise() {
       )
     } else {
       setStatus({
+        prevCount: 0,
         score: 0,
         count: 0,
         status: true,
@@ -128,6 +131,7 @@ function Exercise() {
               ).calculateExercise(type, prev.count, prev.status, prev.score)
 
               return {
+                prevCount: prev.count,
                 count: newCnt,
                 status: newStatus,
                 score: newScore,
@@ -169,6 +173,7 @@ function Exercise() {
 
     return () => {
       setStatus({
+        prevCount: 0,
         score: 0,
         count: 0,
         status: true,
@@ -180,6 +185,12 @@ function Exercise() {
     }
   }, [type])
 
+  useEffect(() => {
+    if (status.prevCount + 1 === status.count) {
+      speakChinese(status.count)
+    }
+  }, [status])
+
   return (
     <Grid container>
       <Grid xs={6} style={{ position: 'relative' }}>
@@ -188,6 +199,7 @@ function Exercise() {
           playsInline
           ref={video}
           onLoadedData={predictWebcam}
+          onEnded={() => speakChinese(`您一共完成了${status.count}个${exerciseNameMap[type]}`)}
           style={{
             width: '480px',
             height: '360px',
@@ -217,7 +229,7 @@ function Exercise() {
         <Grid xs={6}>
           <InputLabel id="type">选择健身动作类型</InputLabel>
           <Select value={type} labelId='type' onChange={e => setType(e.target.value)}>
-            <MenuItem value='push-up'>引体向上</MenuItem>
+            {/* <MenuItem value='push-up'>引体向上</MenuItem> */}
             <MenuItem value='pull-up'>俯卧撑</MenuItem>
             <MenuItem value='squat'>深蹲</MenuItem>
             <MenuItem value='walk'>行走</MenuItem>
@@ -233,7 +245,7 @@ function Exercise() {
 
             <Button
               onClick={e => enableCam(e, false)}
-              disabled={webcamRunning === 'cam'}
+              disabled={webcamRunning === 'cam' || !file}
             >
               {webcamRunning === 'file' ? '关闭视频文件' : webcamRunning === 'cam' ? '请先关闭摄像头' : '打开视频文件'}
             </Button>
