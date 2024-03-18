@@ -21,6 +21,7 @@ import {
   DrawingUtils
 } from '@mediapipe/tasks-vision'
 import axios from 'axios'
+import { throttle } from 'lodash'
 import TypeOfExercise from './GestureScore/TypeOfExercise'
 import Circle from './components/Circle'
 import { speakChinese, exerciseNameMap } from './utils'
@@ -36,6 +37,8 @@ function Exercise() {
   const drawingUtils = useRef()
   const lastVideoTime = useRef(-1)
   const animationFrameId = useRef()
+  const throttledSpeakChinese = useRef(throttle(speakChinese, 2000))
+
 
   const [file, setFile] = useState()
   const [type, setType] = useState('pull-up')
@@ -187,9 +190,9 @@ function Exercise() {
 
   useEffect(() => {
     if (status.prevCount + 1 === status.count) {
-      speakChinese(status.count)
+      throttledSpeakChinese.current(status.count)
     }
-  }, [status])
+  }, [status, throttledSpeakChinese])
 
   return (
     <Grid container>
