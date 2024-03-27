@@ -195,40 +195,43 @@ function Exercise() {
 
   return (
     <Grid container>
-      <Grid xs={6} style={{ position: 'relative' }}>
-        <video
-          autoPlay
-          playsInline
-          ref={video}
-          onLoadedData={predictWebcam}
-          onEnded={() => speakChinese(`您一共完成了${status.count}个${exerciseNameMap[type]}`)}
-          style={{
-            width: '480px',
-            height: '360px',
-            left: '50px',
-            top: '50px',
-            position: 'absolute',
-            clear: 'both',
-            display: 'block',
-            transform: 'rotateY(180deg)'
-          }}
-        ></video>
-        <canvas
-          ref={canvasElement}
-          width='480px'
-          height='360px'
-          style={{
-            position: 'absolute',
-            left: '50px',
-            top: '50px',
-            transform: 'rotateY(180deg)',
-            zIndex: 1
-          }}
-        ></canvas>
+      <Grid xs={12} md={6} sx={{mb:'410px'}}>
+        <div style={{ position: 'relative' }}>
+          <video
+            autoPlay
+            playsInline
+            ref={video}
+            onLoadedData={predictWebcam}
+            onEnded={() => speakChinese(`您一共完成了${status.count}个${exerciseNameMap[type]}`)}
+            style={{
+              width: '480px',
+              height: '360px',
+              left: '50px',
+              top: '50px',
+              position: 'absolute',
+              clear: 'both',
+              display: 'block',
+              transform: 'rotateY(180deg)'
+            }}
+          ></video>
+          <canvas
+            ref={canvasElement}
+            width='480px'
+            height='360px'
+            style={{
+              position: 'absolute',
+              left: '50px',
+              top: '50px',
+              transform: 'rotateY(180deg)',
+              zIndex: 1
+            }}
+          ></canvas>
+        </div>
+
       </Grid>
 
-      <Grid container xs={6} spacing={2}>
-        <Grid xs={6}>
+      <Grid container xs={12} md={6} spacing={2}>
+        <Grid xs={12} md={6}>
           <InputLabel id="type">选择健身动作类型</InputLabel>
           <Select value={type} labelId='type' onChange={e => setType(e.target.value)}>
             {/* <MenuItem value='push-up'>引体向上</MenuItem> */}
@@ -238,7 +241,7 @@ function Exercise() {
             <MenuItem value='sit-up'>仰卧起坐</MenuItem>
           </Select>
         </Grid>
-        <Grid xs={6}>
+        <Grid xs={12} md={6}>
           <InputLabel id="file">选择健身视频</InputLabel>
           <TextField type='file' onChange={e => setFile(e.target.files[0])}></TextField >
         </Grid>
@@ -276,8 +279,8 @@ function Exercise() {
           </ButtonGroup>
         </Grid>
         <Grid container xs={12}>
-          <Grid xs={6}><Circle text={status.count + '次'} color='primary.main' /></Grid>
-          <Grid xs={6}><Circle text={status.score.toFixed(2)} color='secondary.main' /></Grid>
+          <Grid xs={12} md={6}><Circle text={status.count + '次'} color='primary.main' /></Grid>
+          <Grid xs={12} md={6}><Circle text={status.score.toFixed(2)} color='secondary.main' /></Grid>
         </Grid>
         <Grid xs={12}>
           <TableContainer component={Paper}>
