@@ -15,6 +15,8 @@ import {
   ButtonGroup
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import {
   PoseLandmarker,
   FilesetResolver,
@@ -29,8 +31,6 @@ import { speakChinese, exerciseNameMap } from './utils'
 function Exercise() {
   const poseLandmarker = useRef()
   const [webcamRunning, setWebcamRunning] = useState(false)
-  const videoHeight = '360px'
-  const videoWidth = '480px'
   const video = useRef()
   const canvasElement = useRef()
   const canvasCtx = useRef()
@@ -38,6 +38,8 @@ function Exercise() {
   const lastVideoTime = useRef(-1)
   const animationFrameId = useRef()
   const throttledSpeakChinese = useRef(throttle(speakChinese, 2000))
+  const theme = useTheme()
+  const matches = useMediaQuery(theme.breakpoints.up('md'))
 
 
   const [file, setFile] = useState()
@@ -56,7 +58,8 @@ function Exercise() {
     )
     poseLandmarker.current = await PoseLandmarker.createFromOptions(vision, {
       baseOptions: {
-        modelAssetPath: `http://localhost:3000/pose_landmarker_lite.task`,
+        // modelAssetPath: `http://localhost:3000/pose_landmarker_lite.task`,
+        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task`,
         delegate: 'GPU'
       },
       runningMode: 'VIDEO',
@@ -115,10 +118,10 @@ function Exercise() {
   }
 
   async function predictWebcam() {
-    canvasElement.current.style.height = videoHeight
-    video.current.style.height = videoHeight
-    canvasElement.current.style.width = videoWidth
-    video.current.style.width = videoWidth
+    canvasElement.current.style.height = matches ? '360px' : '180px'
+    video.current.style.height = matches ? '360px' : '180px'
+    canvasElement.current.style.width = matches ? '480px' : '180px'
+    video.current.style.width = matches ? '480px' : '180px'
     // Now let's start detecting the stream.
     let startTimeMs = performance.now()
     if (lastVideoTime.current !== video.current.currentTime) {
@@ -195,7 +198,7 @@ function Exercise() {
 
   return (
     <Grid container>
-      <Grid xs={12} md={6} sx={{mb:'410px'}}>
+      <Grid xs={12} md={6} sx={{ mb: matches ? '410px' : '280px' }}>
         <div style={{ position: 'relative' }}>
           <video
             autoPlay
@@ -204,8 +207,8 @@ function Exercise() {
             onLoadedData={predictWebcam}
             onEnded={() => speakChinese(`您一共完成了${status.count}个${exerciseNameMap[type]}`)}
             style={{
-              width: '480px',
-              height: '360px',
+              width: matches ? '480px' : '180px',
+              height: matches ? '360px' : '180px',
               left: '50px',
               top: '50px',
               position: 'absolute',
@@ -216,8 +219,8 @@ function Exercise() {
           ></video>
           <canvas
             ref={canvasElement}
-            width='480px'
-            height='360px'
+            width={matches ? '480px' : '180px'}
+            height={matches ? '360px' : '180px'}
             style={{
               position: 'absolute',
               left: '50px',
@@ -230,7 +233,7 @@ function Exercise() {
 
       </Grid>
 
-      <Grid container xs={12} md={6} spacing={2}>
+      <Grid container xs={12} md={6} spacing={2} sx={{paddingLeft:'20px'}}>
         <Grid xs={12} md={6}>
           <InputLabel id="type">选择健身动作类型</InputLabel>
           <Select value={type} labelId='type' onChange={e => setType(e.target.value)}>
@@ -279,8 +282,8 @@ function Exercise() {
           </ButtonGroup>
         </Grid>
         <Grid container xs={12}>
-          <Grid xs={12} md={6}><Circle text={status.count + '次'} color='primary.main' /></Grid>
-          <Grid xs={12} md={6}><Circle text={status.score.toFixed(2)} color='secondary.main' /></Grid>
+          <Grid xs={6}><Circle text={status.count + '次'} color='primary.main' /></Grid>
+          <Grid xs={6}><Circle text={status.score.toFixed(2)} color='secondary.main' /></Grid>
         </Grid>
         <Grid xs={12}>
           <TableContainer component={Paper}>
