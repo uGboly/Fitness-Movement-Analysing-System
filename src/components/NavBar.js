@@ -27,6 +27,7 @@ function NavBar() {
         {
           (location.pathname === '/exercise' || location.pathname === '/records') && (<>
             <Button sx={getButtonStyle('/exercise')} onClick={() => navigate('/exercise')}>健身</Button>
+            <Button sx={getButtonStyle('/chart')} onClick={() => navigate('/chart')}>统计</Button>
             <Button sx={getButtonStyle('/records')} onClick={() => navigate('/records')}>记录</Button>
           </>)
         }

@@ -1,13 +1,13 @@
-const express = require("express")
-const bodyParser = require("body-parser")
-const cors = require("cors")
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
 
-const knex = require("knex")({
-  client: "sqlite3",
+const knex = require('knex')({
+  client: 'sqlite3',
   connection: {
-    filename: "./mydb.sqlite",
+    filename: './mydb.sqlite'
   },
-  useNullAsDefault: true,
+  useNullAsDefault: true
 })
 
 const app = express()
@@ -16,76 +16,94 @@ const port = 3001
 app.use(bodyParser.json())
 app.use(cors())
 
-app.post("/login", async (req, res) => {
+app.post('/login', async (req, res) => {
   const { email, password } = req.body
   try {
-    const user = await knex("users").where({ email, password }).first()
+    const user = await knex('users').where({ email, password }).first()
     if (user) {
-      res.json({ message: "登录成功", userId : user.id })
+      res.json({ message: '登录成功', userId: user.id })
     } else {
-      res.status(400).json({ message: "邮箱或密码错误" })
+      res.status(400).json({ message: '邮箱或密码错误' })
     }
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: "服务器错误" })
+    res.status(500).json({ message: '服务器错误' })
   }
 })
 
-app.post("/register", async (req, res) => {
+app.post('/register', async (req, res) => {
   const { email, password } = req.body
   try {
-    const existingUser = await knex("users").where({ email }).first()
+    const existingUser = await knex('users').where({ email }).first()
     if (existingUser) {
-      return res.status(400).json({ message: "邮箱已被注册" })
+      return res.status(400).json({ message: '邮箱已被注册' })
     }
 
-    const newUser = await knex("users").insert({
+    const newUser = await knex('users').insert({
       email,
-      password,
+      password
     })
 
-    res.json({ message: "注册成功", userId: newUser[0] })
+    res.json({ message: '注册成功', userId: newUser[0] })
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: "服务器错误" })
+    res.status(500).json({ message: '服务器错误' })
   }
 })
 
-app.post("/fitness-data", async (req, res) => {
-  const {scores, type, userId} = req.body
+app.post('/fitness-data', async (req, res) => {
+  const { scores, type, userId } = req.body
   scores.reverse()
   const timestamp = new Date()
 
   try {
     const insertedData = await Promise.all(
-      scores.map(async (score) => {
-        return knex("fitness_data").insert({
+      scores.map(async score => {
+        return knex('fitness_data').insert({
           userId,
           type,
           score,
-          timestamp,
+          timestamp
         })
       })
     )
 
-    res.json({ message: "数据上传成功", insertedData: insertedData })
+    res.json({ message: '数据上传成功', insertedData: insertedData })
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: "服务器错误" })
+    res.status(500).json({ message: '服务器错误' })
   }
 })
 
-// 假设你已经设置了Express应用并且已经连接到数据库
-
-app.get("/fitness-data/:userId", async (req, res) => {
+app.get('/fitness-data/:userId', async (req, res) => {
   const { userId } = req.params
 
   try {
-    const records = await knex("fitness_data").where("userId", userId)
+    const records = await knex('fitness_data').where('userId', userId)
     res.json(records)
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: "服务器错误" })
+    res.status(500).json({ message: '服务器错误' })
+  }
+})
+
+app.post('/fitness-stat', async (req, res) => {
+  const { userId, startTime, endTime } = req.body
+  try {
+    const data = await knex('fitness_data')
+      .select('type')
+      .count('type as count')
+      .where({
+        userid: userId
+      })
+      .andWhere('timestamp', '>=', startTime)
+      .andWhere('timestamp', '<=', endTime)
+      .groupBy('type')
+
+    res.json(data)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('Internal Server Error')
   }
 })
 
