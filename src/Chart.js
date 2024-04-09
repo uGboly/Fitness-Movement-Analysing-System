@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
-import { Button } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Unstable_Grid2'
 import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
 import axios from 'axios'
+import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import { exerciseNameMap } from './utils'
 
 export default function Chart () {
-  const [startTime, setStartTime] = useState(dayjs())
+  const [startTime, setStartTime] = useState(dayjs('2024-03-01'))
   const [endTime, setEndTime] = useState(dayjs())
   const [data, setData] = useState([])
 
@@ -26,10 +28,17 @@ export default function Chart () {
     }
   }
 
+  useEffect(() => {
+    fetchData()
+  }, [startTime, endTime])
+
   return (
     <Grid container>
-      <Grid xs={6}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Grid
+        xs={6}
+        sx={{ display: 'flex', flex: 'row', justifyContent: 'center' }}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='zh-cn'>
           <DateTimePicker
             value={startTime}
             onChange={newTime => setStartTime(newTime)}
@@ -37,8 +46,11 @@ export default function Chart () {
           />
         </LocalizationProvider>
       </Grid>
-      <Grid xs={6}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Grid
+        xs={6}
+        sx={{ display: 'flex', flex: 'row', justifyContent: 'center' }}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='zh-cn'>
           <DateTimePicker
             value={endTime}
             onChange={newTime => setEndTime(newTime)}
@@ -46,12 +58,38 @@ export default function Chart () {
           />
         </LocalizationProvider>
       </Grid>
-      <Grid>
-        <Button onClick={fetchData}>获取数据</Button>
-        <Button onClick={()=>console.log(data)}>打印数据</Button>
-      </Grid>
-      <Grid>
-        你选择的时间是{startTime.valueOf()} 和{endTime.valueOf()}
+      <Grid
+        xs={12}
+        sx={{
+          display: 'flex',
+          flex: 'row',
+          justifyContent: 'center',
+          paddingTop: '40px'
+        }}
+      >
+        <PieChart
+          series={[
+            {
+              arcLabel: item => `${item.label} (${item.value})`,
+              arcLabelMinAngle: 45,
+              data: data.map((exercise, index) => {
+                return {
+                  id: index,
+                  label: exerciseNameMap[exercise.type],
+                  value: exercise.count
+                }
+              })
+            }
+          ]}
+          sx={{
+            [`& .${pieArcLabelClasses.root}`]: {
+              fill: 'white',
+              fontWeight: 'bold'
+            }
+          }}
+          width={500}
+          height={300}
+        />
       </Grid>
     </Grid>
   )
