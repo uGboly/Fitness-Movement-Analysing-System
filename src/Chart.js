@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Unstable_Grid2'
+import { Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import axios from 'axios'
@@ -7,7 +8,7 @@ import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
-import { exerciseNameMap } from './utils'
+import { exerciseNameMap, summarizeFitnessActivities } from './utils'
 
 export default function Chart () {
   const [startTime, setStartTime] = useState(dayjs('2024-03-01'))
@@ -23,6 +24,7 @@ export default function Chart () {
         endTime: endTime.valueOf()
       })
       setData(response.data)
+      console.log(response.data)
     } catch (error) {
       console.error('Error fetching fitness data:', error)
     }
@@ -64,7 +66,7 @@ export default function Chart () {
           display: 'flex',
           flex: 'row',
           justifyContent: 'center',
-          paddingTop: '40px'
+          paddingY: '40px'
         }}
       >
         <PieChart
@@ -91,6 +93,11 @@ export default function Chart () {
           height={300}
         />
       </Grid>
+      {data.length > 0 && (
+        <Grid xs={12} sx={{ paddingX: '30%' }}>
+          <Typography>{summarizeFitnessActivities(data)}</Typography>
+        </Grid>
+      )}
     </Grid>
   )
 }
