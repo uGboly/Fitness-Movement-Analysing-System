@@ -1,20 +1,23 @@
 import React, { useState } from 'react'
-import { Button, TextField, Box } from '@mui/material'
+import { Button, ButtonGroup, TextField, Box } from '@mui/material'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
 const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const navigate  = useNavigate()
+  const navigate = useNavigate()
 
-  const handleRegister = async (e) => {
+  const handleRegister = async e => {
     e.preventDefault()
     try {
-      const response = await axios.post('http://localhost:3001/register', { email, password })
+      const response = await axios.post('http://localhost:3001/register', {
+        email,
+        password
+      })
       const { userId } = response.data
       localStorage.setItem('userId', userId)
-      navigate ('/exercise')
+      navigate('/exercise')
     } catch (error) {
       console.error('注册失败:', error)
       // 处理错误
@@ -23,33 +26,44 @@ const Register = () => {
 
   return (
     <Box
-      component="form"
+      component='form'
       onSubmit={handleRegister}
       sx={{
-        '& .MuiTextField-root': { m: 1, width: '25ch' },
+        '& .MuiTextField-root': { m: 1, width: '25ch' }
       }}
       noValidate
-      autoComplete="off"
+      autoComplete='off'
     >
       <div>
         <TextField
           required
-          id="email"
-          label="邮箱"
+          id='email'
+          label='邮箱'
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
         />
         <TextField
           required
-          id="password"
-          label="密码"
-          type="password"
+          id='password'
+          label='密码'
+          type='password'
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
         />
-        <Button type="submit" variant="contained" sx={{ mt: 3, ml: 1 }}>
-          注册
-        </Button>
+        <TextField
+          required
+          id='password_ensure'
+          label='确认密码'
+          type='password'
+        />
+        <ButtonGroup>
+          <Button type='submit' variant='contained' sx={{ mt: 3, ml: 1 }}>
+            注册
+          </Button>
+          <Button variant='contained' sx={{ mt: 3, ml: 1 }}>
+            返回登录页面
+          </Button>
+        </ButtonGroup>
       </div>
     </Box>
   )
