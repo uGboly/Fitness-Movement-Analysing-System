@@ -40,7 +40,9 @@ i18n
           counter: 'Sequence Number',
           actChoose: 'Choose Activities',
           vidChoose: 'Choose Video File',
-          times:'Time'
+          times: 'Time',
+          selectBeginning: 'Select Beginning Date',
+          selectEnd: 'Select End Date'
         }
       },
       zh: {
@@ -71,7 +73,9 @@ i18n
           counter: '计次',
           actChoose: '选择健身动作类型',
           vidChoose: '选择健身视频',
-          times:'次'
+          times: '次',
+          selectBeginning: '选择开始时间',
+          selectEnd: '选择结束时间'
         }
       }
     }

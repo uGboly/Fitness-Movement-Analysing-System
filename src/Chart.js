@@ -42,11 +42,14 @@ export default function Chart () {
         xs={6}
         sx={{ display: 'flex', flex: 'row', justifyContent: 'center' }}
       >
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='zh-cn'>
+        <LocalizationProvider
+          dateAdapter={AdapterDayjs}
+          adapterLocale={i18n.language === 'en' ? 'en' : 'zh-cn'}
+        >
           <DateTimePicker
             value={startTime}
             onChange={newTime => setStartTime(newTime)}
-            label='选择开始时间'
+            label={t('selectBeginning')}
           />
         </LocalizationProvider>
       </Grid>
@@ -54,11 +57,14 @@ export default function Chart () {
         xs={6}
         sx={{ display: 'flex', flex: 'row', justifyContent: 'center' }}
       >
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='zh-cn'>
+        <LocalizationProvider
+          dateAdapter={AdapterDayjs}
+          adapterLocale={i18n.language === 'en' ? 'en' : 'zh-cn'}
+        >
           <DateTimePicker
             value={endTime}
             onChange={newTime => setEndTime(newTime)}
-            label='选择结束时间'
+            label={t('selectEnd')}
           />
         </LocalizationProvider>
       </Grid>
@@ -97,7 +103,9 @@ export default function Chart () {
       </Grid>
       {data.length > 0 && (
         <Grid xs={12} sx={{ paddingX: '30%' }}>
-          <Typography>{summarizeFitnessActivities(data, i18n.language)}</Typography>
+          <Typography>
+            {summarizeFitnessActivities(data, i18n.language)}
+          </Typography>
         </Grid>
       )}
     </Grid>
