@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 import { Button, ButtonGroup, TextField, Box } from '@mui/material'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const {t} = useTranslation()
+
 
   const handleRegister = async e => {
     e.preventDefault()

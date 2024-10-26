@@ -27,6 +27,7 @@ import { throttle } from 'lodash'
 import TypeOfExercise from './GestureScore/TypeOfExercise'
 import Circle from './components/Circle'
 import { speakChinese, exerciseNameMap } from './utils'
+import { useTranslation } from 'react-i18next'
 
 function Exercise() {
   const poseLandmarker = useRef()
@@ -40,6 +41,8 @@ function Exercise() {
   const throttledSpeakChinese = useRef(throttle(speakChinese, 2000))
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
+  const {t} = useTranslation()
+
 
 
   const [file, setFile] = useState()

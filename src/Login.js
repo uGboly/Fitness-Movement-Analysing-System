@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { Button, ButtonGroup, TextField, Box } from '@mui/material'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const handleLogin = async e => {
     e.preventDefault()
@@ -19,7 +21,7 @@ const Login = () => {
       localStorage.setItem('userId', userId)
       navigate('/exercise')
     } catch (error) {
-      console.error('登录失败:', error)
+      console.error('Fail to Login:', error)
     }
   }
 
@@ -37,24 +39,24 @@ const Login = () => {
         <TextField
           required
           id='email'
-          label='邮箱'
+          label={t('email')}
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
         <TextField
           required
           id='password'
-          label='密码'
+          label={t('password')}
           type='password'
           value={password}
           onChange={e => setPassword(e.target.value)}
         />
         <ButtonGroup>
           <Button type='submit' variant='contained' sx={{ mt: 3, ml: 1 }}>
-            登录
+            {t('login')}
           </Button>
           <Button variant='contained' sx={{ mt: 3, ml: 1 }}>
-            注册新账号
+            {t('newAccount')}
           </Button>
         </ButtonGroup>
       </div>

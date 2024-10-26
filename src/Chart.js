@@ -9,11 +9,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { exerciseNameMap, summarizeFitnessActivities } from './utils'
+import { useTranslation } from 'react-i18next'
 
 export default function Chart () {
   const [startTime, setStartTime] = useState(dayjs('2024-03-01'))
   const [endTime, setEndTime] = useState(dayjs())
   const [data, setData] = useState([])
+  const {t} = useTranslation()
+
 
   const fetchData = async () => {
     const userId = +localStorage.getItem('userId')

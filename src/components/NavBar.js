@@ -19,18 +19,18 @@ function NavBar() {
     <AppBar position="static" sx={{ marginBottom: '20px' }}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          健身动作评估系统
+          {t('title')}
         </Typography>
         {
           (location.pathname === '/' || location.pathname === '/register') && (<>
             <Button sx={getButtonStyle('/')} onClick={() => navigate('/')}>{t('login')}</Button>
-            <Button sx={getButtonStyle('/register')} onClick={() => navigate('/register')}>注册</Button>
+            <Button sx={getButtonStyle('/register')} onClick={() => navigate('/register')}>{t('register')}</Button>
           </>)
         }
         {
           (location.pathname === '/exercise' ||  location.pathname === '/chart') && (<>
-            <Button sx={getButtonStyle('/exercise')} onClick={() => navigate('/exercise')}>健身</Button>
-            <Button sx={getButtonStyle('/chart')} onClick={() => navigate('/chart')}>统计</Button>
+            <Button sx={getButtonStyle('/exercise')} onClick={() => navigate('/exercise')}>{t('exercise')}</Button>
+            <Button sx={getButtonStyle('/chart')} onClick={() => navigate('/chart')}>{t('statistics')}</Button>
           </>)
         }
         <I18nMenu/>
