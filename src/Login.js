@@ -55,7 +55,11 @@ const Login = () => {
           <Button type='submit' variant='contained' sx={{ mt: 3, ml: 1 }}>
             {t('login')}
           </Button>
-          <Button variant='contained' sx={{ mt: 3, ml: 1 }}>
+          <Button
+            variant='contained'
+            sx={{ mt: 3, ml: 1 }}
+            onClick={() => navigate('/register')}
+          >
             {t('newAccount')}
           </Button>
         </ButtonGroup>

@@ -8,8 +8,7 @@ const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
-  const {t} = useTranslation()
-
+  const { t } = useTranslation()
 
   const handleRegister = async e => {
     e.preventDefault()
@@ -22,8 +21,7 @@ const Register = () => {
       localStorage.setItem('userId', userId)
       navigate('/exercise')
     } catch (error) {
-      console.error('注册失败:', error)
-      // 处理错误
+      console.error('fail to register:', error)
     }
   }
 
@@ -41,14 +39,14 @@ const Register = () => {
         <TextField
           required
           id='email'
-          label='邮箱'
+          label={t('email')}
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
         <TextField
           required
           id='password'
-          label='密码'
+          label={t('password')}
           type='password'
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -56,15 +54,19 @@ const Register = () => {
         <TextField
           required
           id='password_ensure'
-          label='确认密码'
+          label={t('passwordEnsure')}
           type='password'
         />
         <ButtonGroup>
           <Button type='submit' variant='contained' sx={{ mt: 3, ml: 1 }}>
-            注册
+            {t('register')}
           </Button>
-          <Button variant='contained' sx={{ mt: 3, ml: 1 }}>
-            返回登录页面
+          <Button
+            variant='contained'
+            sx={{ mt: 3, ml: 1 }}
+            onClick={() => navigate('/')}
+          >
+            {t('returnToLogin')}
           </Button>
         </ButtonGroup>
       </div>
