@@ -42,7 +42,8 @@ i18n
           vidChoose: 'Choose Video File',
           times: 'Time',
           selectBeginning: 'Select Beginning Date',
-          selectEnd: 'Select End Date'
+          selectEnd: 'Select End Date',
+          sum:'In total you have done'
         }
       },
       zh: {
@@ -75,7 +76,8 @@ i18n
           vidChoose: '选择健身视频',
           times: '次',
           selectBeginning: '选择开始时间',
-          selectEnd: '选择结束时间'
+          selectEnd: '选择结束时间',
+          sum:'您一共完成了'
         }
       }
     }

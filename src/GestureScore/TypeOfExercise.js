@@ -170,9 +170,9 @@ class TypeOfExercise extends BodyPartAngle {
   calculateExercise(exerciseType, counter, status, avgScore) {
     try {
       switch (exerciseType) {
-        case 'push-up':
+        case 'pushUp':
           return this.pushUp(counter, status, avgScore)
-        case 'pull-up':
+        case 'pullUp':
           return this.pullUp(counter, status, avgScore)
         case 'squat':
           return this.squat(counter, status, avgScore)
@@ -180,7 +180,7 @@ class TypeOfExercise extends BodyPartAngle {
           // Note: The 'walk' method does not use avgScore, so handle it accordingly.
           const [walkCounter, walkStatus] = this.walk(counter, status)
           return [walkCounter, walkStatus, 0]
-        case 'sit-up':
+        case 'sitUp':
           return this.sitUp(counter, status, avgScore)
         default:
           throw new Error('Unknown exercise type')

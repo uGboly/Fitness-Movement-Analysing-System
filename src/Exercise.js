@@ -44,7 +44,7 @@ function Exercise () {
   const { t, i18n } = useTranslation()
 
   const [file, setFile] = useState()
-  const [type, setType] = useState('pull-up')
+  const [type, setType] = useState('pullUp')
   const [status, setStatus] = useState({
     prevCount: 0,
     score: 0,
@@ -213,7 +213,9 @@ function Exercise () {
             onEnded={() =>
               speak(
                 i18n.language,
-                `您一共完成了${status.count}个${t(type)}`
+                `${t('sum')}${status.count}${t('times')}${
+                  i18n.language === 'en' && status.count > 1 ? 's' : ''
+                }${t(type)}`
               )
             }
             style={{
@@ -334,7 +336,7 @@ function Exercise () {
                 {status.historyScores.map((value, index, arr) => (
                   <TableRow key={index}>
                     <TableCell>
-                      {i18n.language != 'en' ? '第' : ''}
+                      {i18n.language !== 'en' ? '第' : ''}
                       {arr.length - index}
                       {i18n.language === 'en'
                         ? arr.length - index === 1
