@@ -28,7 +28,7 @@ i18n
           pullUp: 'Pull Up',
           squat: 'Squat',
           walk: 'Walk',
-          sitUp: 'Sit up',
+          sitUp: 'Sit Up',
           closeFile: 'Close File',
           closeCamP: 'Close Cameral First',
           openFile: 'Open Video File',

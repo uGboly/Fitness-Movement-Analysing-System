@@ -26,7 +26,7 @@ import axios from 'axios'
 import { throttle } from 'lodash'
 import TypeOfExercise from './GestureScore/TypeOfExercise'
 import Circle from './components/Circle'
-import { speakChinese, exerciseNameMap } from './utils'
+import { speak } from './utils'
 import { useTranslation } from 'react-i18next'
 
 function Exercise () {
@@ -38,7 +38,7 @@ function Exercise () {
   const drawingUtils = useRef()
   const lastVideoTime = useRef(-1)
   const animationFrameId = useRef()
-  const throttledSpeakChinese = useRef(throttle(speakChinese, 2000))
+  const throttledSpeak = useRef(throttle(speak, 2000))
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
   const { t, i18n } = useTranslation()
@@ -197,9 +197,9 @@ function Exercise () {
 
   useEffect(() => {
     if (status.prevCount + 1 === status.count) {
-      throttledSpeakChinese.current(status.count)
+      throttledSpeak.current(i18n.language, status.count)
     }
-  }, [status, throttledSpeakChinese])
+  }, [i18n.language, status, throttledSpeak])
 
   return (
     <Grid container>
@@ -211,8 +211,9 @@ function Exercise () {
             ref={video}
             onLoadedData={predictWebcam}
             onEnded={() =>
-              speakChinese(
-                `您一共完成了${status.count}个${exerciseNameMap[type]}`
+              speak(
+                i18n.language,
+                `您一共完成了${status.count}个${t(type)}`
               )
             }
             style={{
@@ -249,11 +250,11 @@ function Exercise () {
             labelId='type'
             onChange={e => setType(e.target.value)}
           >
-            {/* <MenuItem value='push-up'>{t('pushUp')}</MenuItem> */}
-            <MenuItem value='pull-up'>{t('pullUp')}</MenuItem>
+            {/* <MenuItem value='pushUp'>{t('pushUp')}</MenuItem> */}
+            <MenuItem value='pullUp'>{t('pullUp')}</MenuItem>
             <MenuItem value='squat'>{t('squat')}</MenuItem>
             <MenuItem value='walk'>{t('walk')}</MenuItem>
-            <MenuItem value='sit-up'>{t('sitUp')}</MenuItem>
+            <MenuItem value='sitUp'>{t('sitUp')}</MenuItem>
           </Select>
         </Grid>
         <Grid xs={12} md={6}>

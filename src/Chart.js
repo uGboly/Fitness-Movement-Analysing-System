@@ -8,15 +8,14 @@ import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
-import { exerciseNameMap, summarizeFitnessActivities } from './utils'
+import { summarizeFitnessActivities } from './utils'
 import { useTranslation } from 'react-i18next'
 
 export default function Chart () {
   const [startTime, setStartTime] = useState(dayjs('2024-03-01'))
   const [endTime, setEndTime] = useState(dayjs())
   const [data, setData] = useState([])
-  const {t} = useTranslation()
-
+  const { t, i18n } = useTranslation()
 
   const fetchData = async () => {
     const userId = +localStorage.getItem('userId')
@@ -80,7 +79,7 @@ export default function Chart () {
               data: data.map((exercise, index) => {
                 return {
                   id: index,
-                  label: exerciseNameMap[exercise.type],
+                  label: t(exercise.type),
                   value: exercise.count
                 }
               })
@@ -98,7 +97,7 @@ export default function Chart () {
       </Grid>
       {data.length > 0 && (
         <Grid xs={12} sx={{ paddingX: '30%' }}>
-          <Typography>{summarizeFitnessActivities(data)}</Typography>
+          <Typography>{summarizeFitnessActivities(data, i18n.language)}</Typography>
         </Grid>
       )}
     </Grid>
