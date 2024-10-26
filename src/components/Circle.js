@@ -28,7 +28,7 @@ function Circle({ text, color}) {
                     color: 'white'
                 }}
             >
-                <Typography variant="h4">{text}</Typography>
+                <Typography variant="h5">{text}</Typography>
             </Paper>
         </Box>
     )

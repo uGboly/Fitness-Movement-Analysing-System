@@ -29,7 +29,7 @@ import Circle from './components/Circle'
 import { speakChinese, exerciseNameMap } from './utils'
 import { useTranslation } from 'react-i18next'
 
-function Exercise() {
+function Exercise () {
   const poseLandmarker = useRef()
   const [webcamRunning, setWebcamRunning] = useState(false)
   const video = useRef()
@@ -41,9 +41,7 @@ function Exercise() {
   const throttledSpeakChinese = useRef(throttle(speakChinese, 2000))
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
-  const {t} = useTranslation()
-
-
+  const { t, i18n } = useTranslation()
 
   const [file, setFile] = useState()
   const [type, setType] = useState('pull-up')
@@ -71,7 +69,7 @@ function Exercise() {
     })
   }
 
-  async function enableCam(event, isCam) {
+  async function enableCam (event, isCam) {
     if (!poseLandmarker.current) {
       await createPoseLandmarker()
     }
@@ -120,7 +118,7 @@ function Exercise() {
     }
   }
 
-  async function predictWebcam() {
+  async function predictWebcam () {
     canvasElement.current.style.height = matches ? '360px' : '180px'
     video.current.style.height = matches ? '360px' : '180px'
     canvasElement.current.style.width = matches ? '480px' : '180px'
@@ -144,7 +142,10 @@ function Exercise() {
                 count: newCnt,
                 status: newStatus,
                 score: newScore,
-                historyScores: newCnt > prev.count ? [newScore, ...prev.historyScores] : prev.historyScores
+                historyScores:
+                  newCnt > prev.count
+                    ? [newScore, ...prev.historyScores]
+                    : prev.historyScores
               }
             })
 
@@ -188,7 +189,8 @@ function Exercise() {
         status: true,
         historyScores: []
       })
-      animationFrameId.current && window.cancelAnimationFrame(animationFrameId.current)
+      animationFrameId.current &&
+        window.cancelAnimationFrame(animationFrameId.current)
       poseLandmarker.current = null
     }
   }, [type])
@@ -208,7 +210,11 @@ function Exercise() {
             playsInline
             ref={video}
             onLoadedData={predictWebcam}
-            onEnded={() => speakChinese(`您一共完成了${status.count}个${exerciseNameMap[type]}`)}
+            onEnded={() =>
+              speakChinese(
+                `您一共完成了${status.count}个${exerciseNameMap[type]}`
+              )
+            }
             style={{
               width: matches ? '480px' : '180px',
               height: matches ? '360px' : '180px',
@@ -233,82 +239,117 @@ function Exercise() {
             }}
           ></canvas>
         </div>
-
       </Grid>
 
-      <Grid container xs={12} md={6} spacing={2} sx={{paddingLeft:'20px'}}>
+      <Grid container xs={12} md={6} spacing={2} sx={{ paddingLeft: '20px' }}>
         <Grid xs={12} md={6}>
-          <InputLabel id="type">选择健身动作类型</InputLabel>
-          <Select value={type} labelId='type' onChange={e => setType(e.target.value)}>
-            {/* <MenuItem value='push-up'>引体向上</MenuItem> */}
-            <MenuItem value='pull-up'>俯卧撑</MenuItem>
-            <MenuItem value='squat'>深蹲</MenuItem>
-            <MenuItem value='walk'>行走</MenuItem>
-            <MenuItem value='sit-up'>仰卧起坐</MenuItem>
+          <InputLabel id='type'>{t('actChoose')}</InputLabel>
+          <Select
+            value={type}
+            labelId='type'
+            onChange={e => setType(e.target.value)}
+          >
+            {/* <MenuItem value='push-up'>{t('pushUp')}</MenuItem> */}
+            <MenuItem value='pull-up'>{t('pullUp')}</MenuItem>
+            <MenuItem value='squat'>{t('squat')}</MenuItem>
+            <MenuItem value='walk'>{t('walk')}</MenuItem>
+            <MenuItem value='sit-up'>{t('sitUp')}</MenuItem>
           </Select>
         </Grid>
         <Grid xs={12} md={6}>
-          <InputLabel id="file">选择健身视频</InputLabel>
-          <TextField type='file' onChange={e => setFile(e.target.files[0])}></TextField >
+          <InputLabel id='file'>{t('vidChoose')}</InputLabel>
+          <TextField
+            type='file'
+            onChange={e => setFile(e.target.files[0])}
+          ></TextField>
         </Grid>
         <Grid xs={12}>
-          <ButtonGroup variant="contained" >
-
+          <ButtonGroup variant='contained'>
             <Button
               onClick={e => enableCam(e, false)}
               disabled={webcamRunning === 'cam' || !file}
             >
-              {webcamRunning === 'file' ? '关闭视频文件' : webcamRunning === 'cam' ? '请先关闭摄像头' : '打开视频文件'}
+              {webcamRunning === 'file'
+                ? t('closeFile')
+                : webcamRunning === 'cam'
+                ? t('closeCamP')
+                : t('openFile')}
             </Button>
             <Button
               onClick={e => enableCam(e, true)}
               disabled={webcamRunning === 'file'}
             >
-              {webcamRunning === 'cam' ? '关闭摄像头' : webcamRunning === 'file' ? '请先关闭视频文件' : '打开摄像头'}
+              {webcamRunning === 'cam'
+                ? t('closeCam')
+                : webcamRunning === 'file'
+                ? t('closeFileP')
+                : t('openCam')}
             </Button>
             <Button
               onClick={async () => {
                 try {
-                  const response = await axios.post('http://localhost:3001/fitness-data', {
-                    scores: status.historyScores,
-                    userId: localStorage.getItem('userId'),
-                    type
-                  });
-                  console.log('上传成功:', response.data);
+                  const response = await axios.post(
+                    'http://localhost:3001/fitness-data',
+                    {
+                      scores: status.historyScores,
+                      userId: localStorage.getItem('userId'),
+                      type
+                    }
+                  )
                 } catch (error) {
-                  console.error('上传失败:', error);
+                  console.error('fail to upload:', error)
                 }
               }}
             >
-              上传健身数据
+              {t('uploadData')}
             </Button>
           </ButtonGroup>
         </Grid>
         <Grid container xs={12}>
-          <Grid xs={6}><Circle text={status.count + '次'} color='primary.main' /></Grid>
-          <Grid xs={6}><Circle text={status.score.toFixed(2)} color='secondary.main' /></Grid>
+          <Grid xs={6}>
+            <Circle
+              text={
+                status.count +
+                t('times') +
+                (i18n.language === 'en' && status.count > 1 ? 's' : '')
+              }
+              color='primary.main'
+            />
+          </Grid>
+          <Grid xs={6}>
+            <Circle text={status.score.toFixed(2)} color='secondary.main' />
+          </Grid>
         </Grid>
         <Grid xs={12}>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>计次</TableCell>
-                  <TableCell>分数</TableCell>
+                  <TableCell>{t('counter')}</TableCell>
+                  <TableCell>{t('score')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {status.historyScores.map((value, index, arr) => (
                   <TableRow key={index}>
-                    <TableCell>第{arr.length - index}次</TableCell>
+                    <TableCell>
+                      {i18n.language != 'en' ? '第' : ''}
+                      {arr.length - index}
+                      {i18n.language === 'en'
+                        ? arr.length - index === 1
+                          ? 'st'
+                          : arr.length - index === 2
+                          ? 'nd'
+                          : 'th'
+                        : '次'}
+                    </TableCell>
                     <TableCell>{value.toFixed(2)}</TableCell>
-                  </TableRow>))
-                }
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
         </Grid>
-
       </Grid>
     </Grid>
   )
