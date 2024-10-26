@@ -14,11 +14,11 @@ const setupUserTable = async () => {
       table.string("email").notNullable().unique()
       table.string("password").notNullable()
     })
-    console.log("用户表已创建")
+    console.log("Table Created")
   }
 }
 
-setupUserTable().then(() => console.log("数据库初始化完成"))
+setupUserTable().then(() => console.log("Database initialized"))
 
 knex.schema
   .createTable("fitness_data", function (table) {
@@ -28,6 +28,6 @@ knex.schema
     table.integer("score").notNullable()
     table.timestamp("timestamp").defaultTo(knex.fn.now())
   })
-  .then(() => console.log("健身数据表建立完毕"))
+  .then(() => console.log("Table initialized"))
 
 module.exports = knex
