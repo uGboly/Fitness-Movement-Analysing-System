@@ -135,7 +135,7 @@ app.post('/logout', isAuthenticated, (req, res) => {
       console.error('Error during session destruction:', err)
       res.status(500).json({ message: 'Logout failed' })
     } else {
-      res.clearCookie('connect.sid') // Clear the session cookie
+      res.clearCookie('connect.sid')
       res.json({ message: 'Logged out successfully' })
     }
   })

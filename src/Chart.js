@@ -18,13 +18,16 @@ export default function Chart () {
   const { t, i18n } = useTranslation()
 
   const fetchData = async () => {
-    const userId = +localStorage.getItem('userId')
     try {
-      const response = await axios.post('http://localhost:3001/fitness-stat', {
-        userId,
-        startTime: startTime.valueOf(),
-        endTime: endTime.valueOf()
-      })
+      const response = await axios.post(
+        'http://localhost:3001/fitness-stat',
+        {
+          startTime: startTime.valueOf(),
+          endTime: endTime.valueOf()
+        },
+        { withCredentials: true }
+      )
+
       setData(response.data)
       console.log(response.data)
     } catch (error) {

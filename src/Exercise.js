@@ -291,16 +291,16 @@ function Exercise () {
             <Button
               onClick={async () => {
                 try {
-                  const response = await axios.post(
+                  await axios.post(
                     'http://localhost:3001/fitness-data',
                     {
                       scores: status.historyScores,
-                      userId: localStorage.getItem('userId'),
                       type
-                    }
+                    },
+                    { withCredentials: true }
                   )
                 } catch (error) {
-                  console.error('fail to upload:', error)
+                  console.error('Fail to upload:', error)
                 }
               }}
             >
