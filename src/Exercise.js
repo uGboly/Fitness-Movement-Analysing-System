@@ -252,7 +252,7 @@ function Exercise () {
             labelId='type'
             onChange={e => setType(e.target.value)}
           >
-            {/* <MenuItem value='pushUp'>{t('pushUp')}</MenuItem> */}
+            <MenuItem value='pushUp'>{t('pushUp')}</MenuItem>
             <MenuItem value='pullUp'>{t('pullUp')}</MenuItem>
             <MenuItem value='squat'>{t('squat')}</MenuItem>
             <MenuItem value='walk'>{t('walk')}</MenuItem>

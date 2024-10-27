@@ -13,15 +13,19 @@ const Login = () => {
   const handleLogin = async e => {
     e.preventDefault()
     try {
-      const response = await axios.post('http://localhost:3001/login', {
-        email,
-        password
-      })
-      const { userId } = response.data
-      localStorage.setItem('userId', userId)
-      navigate('/exercise')
+      const response = await axios.post(
+        'http://localhost:3001/login',
+        { email, password },
+        { withCredentials: true }
+      )
+
+      if (response.data.message === 'Login successful') {
+        navigate('/exercise')
+      } else {
+        console.error('Unexpected response:', response.data)
+      }
     } catch (error) {
-      console.error('Fail to Login:', error)
+      console.error('Failed to Login:', error)
     }
   }
 

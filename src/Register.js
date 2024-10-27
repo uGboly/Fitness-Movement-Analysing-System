@@ -13,15 +13,19 @@ const Register = () => {
   const handleRegister = async e => {
     e.preventDefault()
     try {
-      const response = await axios.post('http://localhost:3001/register', {
-        email,
-        password
-      })
-      const { userId } = response.data
-      localStorage.setItem('userId', userId)
-      navigate('/exercise')
+      const response = await axios.post(
+        'http://localhost:3001/register',
+        { email, password },
+        { withCredentials: true }
+      )
+
+      if (response.data.message === 'Registration successful') {
+        navigate('/exercise')
+      } else {
+        console.error('Unexpected response:', response.data)
+      }
     } catch (error) {
-      console.error('fail to register:', error)
+      console.error('Failed to register:', error)
     }
   }
 
