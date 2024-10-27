@@ -30,15 +30,19 @@ The system is built with **React.js** for the front end and **Express.js** for t
 
 ## Installation and Deployment
 
-1. Install dependencies:
-    ```bash
-    npm install
-    ```
-2. Build the project:
-    ```bash
-    npm run build
-    ```
-3. Start the server:
-    ```bash
-    node app.js
-    ```
+1. Install the necessary packages:
+   ```bash
+   npm install
+   ```
+2. Build the application:
+   ```bash
+   npm run build
+   ```
+3. Initialize the database:
+   ```bash
+   node database.js
+   ```
+4. Start the server:
+   ```bash
+   node app.js
+   ```
